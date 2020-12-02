@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+
+    "target": "es5",
+    "module": "commonjs",
+    "lib": [ "DOM", "ES2015", "ES2016", "ES2017", "ES2018" ],
+
+    "outDir": "dist",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+
+    "rootDirs": [
+      "libs",
+      "src"
+    ],
+    "esModuleInterop": true,
+
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/**/*",
+    "libs/**/*"
+  ]
+}
