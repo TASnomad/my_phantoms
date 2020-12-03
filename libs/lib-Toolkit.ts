@@ -252,7 +252,7 @@ export default class Toolkit {
 				fieldsPos.push({ name: "0", position: 0 })
 				columns.shift()
 			}
-			
+
 			for (const col of columns) {
 				let idx = csv[0]?.findIndex((cell) => cell === col) || -1
 				if (idx < 0) {
@@ -272,12 +272,13 @@ export default class Toolkit {
 				return cell as T
 			}))
 		} else {
-			rows.push(...(csv as T[][]).map((l) => l[column || fallbackColumnIndex] as T))
+			const col = fallbackColumnIndex || 0
+			rows.push(...(csv as T[][]).map((l) => l[col] as T))
 		}
 
 		return rows
 	}
-	
+
 	public static async fetchCSVColumn(url: string, columnName?: string): Promise<string[]> {
 		const data = await Toolkit.fetchCSV(url)
 
