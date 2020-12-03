@@ -15,6 +15,16 @@ interface IRemainingTimeDTO {
 	timeValue?: number
 }
 
+interface IProxyDTO extends IProxy {
+	proxy: "http" | "pool" | "none" // FIXME: check if the endpoint can return "value"
+}
+
+interface IProxy {
+	address: string
+	username?: string
+	password?: string
+}
+
 export class Downloader {
 
 	public static readonly gDocsUrlPattern = "https://docs.google.com/spreadsheets/d/"
@@ -115,6 +125,7 @@ export default class Toolkit {
 
 	private buster: Buster
 	private static readonly phantombusterServerUrl: string = process.argv[2] || ""
+	private static readonly phantombusterProxyPoolEndpoint = "api/v1/proxies/pools.json"
 	private static verbose = true
 	private minTimeLeftBeforeExit = -1
 
@@ -283,5 +294,29 @@ export default class Toolkit {
 		const data = await Toolkit.fetchCSV(url)
 
 		return Toolkit.extractCsvRows<string>(data, columnName, 0)
+	}
+
+	public async fetchConfiguredProxy(): Promise<IProxy> {
+		const h: needle.NeedleOptions = { headers: { "X-Phantombuster-Key-1": this.buster.apiKey } }
+		const resp = await needle("get", Toolkit.phantombusterServerUrl + "api/v1/agent" + this.buster.agentId, {}, h)
+		const p = resp.body.data.proxy as IProxyDTO
+
+		if (p.proxy === "http") {
+			return {
+				address: p.address,
+				username: p.username,
+				password: p.password,
+			}
+		} else if (p.proxy === "pool") {
+			const r = await needle("get", Toolkit.phantombusterServerUrl + Toolkit.phantombusterProxyPoolEndpoint, {}, h)
+			const pools = r.body.data as IProxyDTO[]
+			const p  = pools[Math.floor(Math.random() * pools.length)]
+			return {
+				address: p?.address || "",
+				username: p?.username,
+				password: p?.password,
+			}
+		}
+		return {} as IProxy
 	}
 }
