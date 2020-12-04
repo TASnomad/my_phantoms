@@ -23,7 +23,7 @@
 
     "rootDirs": [
       "libs",
-      "src"
+      "src/dummy_phantom"
     ],
     "esModuleInterop": true,
 

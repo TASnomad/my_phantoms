@@ -19,7 +19,7 @@ interface IProxyDTO extends IProxy {
 	proxy: "http" | "pool" | "none" // FIXME: check if the endpoint can return "value"
 }
 
-interface IProxy {
+export interface IProxy {
 	address: string
 	username?: string
 	password?: string
