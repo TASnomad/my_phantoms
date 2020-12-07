@@ -312,11 +312,39 @@ export default class Toolkit {
 			const pools = r.body.data as IProxyDTO[]
 			const p  = pools[Math.floor(Math.random() * pools.length)]
 			return {
-				address: p?.address || "",
-				username: p?.username,
-				password: p?.password,
+				address: p ? p.address || "" : "",
+				username: p ? p.username : "",
+				password: p ? p.password : "",
 			}
 		}
 		return {} as IProxy
+	}
+
+	private static getCleanedFilenameForS3(filename: string): string {
+		return filename.replace(/[%#+-?\\,|]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+	}
+
+	public saveCSV(csv: IObject[][], headers?: string[], name = "result"): Promise<string> {
+		const h = Array.isArray(headers) ? headers : Toolkit.getFieldsFromArray(csv)
+		return this.buster.saveText(Papa.unparse({ fields: h, data: csv }), Toolkit.getCleanedFilenameForS3(name) + ".csv")
+	}
+
+	public saveJSON(json: IObject[][], name = "result"): Promise<string> {
+		return this.buster.saveText(JSON.stringify(json), Toolkit.getCleanedFilenameForS3(name) + ".csv")
+	}
+
+	private static getFieldsFromArray(arr: IObject[][]): string[] {
+		const fields: string[] = []
+
+		for (const cell of arr) {
+			if (!isEmptyObject(cell)) {
+				for (const f of Object.keys(cell)) {
+					if (fields.indexOf(f) < 0) {
+						fields.push(f)
+					}
+				}
+			}
+		}
+		return fields
 	}
 }
