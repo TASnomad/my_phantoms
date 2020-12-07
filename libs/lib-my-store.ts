@@ -8,5 +8,5 @@ declare module "puppeteer" {
 export interface IObject { [k: string]: unknown }
 
 export function isEmptyObject(o: object): o is IObject {
-	return typeof o === "object" && o !== null && Object.keys(o).length > 0
+	return typeof o === "object" && o !== null && Object.keys(o).length < 1
 }

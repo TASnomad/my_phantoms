@@ -2,7 +2,7 @@ import { URL } from "url"
 import needle from "needle"
 import Buster from "phantombuster"
 import validator from "is-my-json-valid"
-import { IObject } from "./lib-my-store"
+import { IObject, isEmptyObject } from "./lib-my-store"
 import * as Papa from "papaparse"
 
 type LogType = "error" | "warning" | "info" | "loading" | "done" | "debug"
@@ -155,13 +155,13 @@ export default class Toolkit {
 	}
 
 	public static log(type: LogType, ...args: unknown[]): void {
-		if (!Toolkit.verbose) {
-			console.log("%s:", Toolkit.logTypes[type], ...args)
+		if (Toolkit.verbose) {
+			console.log("%s", Toolkit.logTypes[type], ...args)
 		}
 	}
 
 	public static logf(type: LogType, fmt: string, ...args: unknown[]): void {
-		if (!Toolkit.verbose) {
+		if (Toolkit.verbose) {
 			console.log(`${Toolkit.logTypes[type]} ${fmt}`, ...args)
 		}
 	}
@@ -299,15 +299,15 @@ export default class Toolkit {
 	public async fetchConfiguredProxy(): Promise<IProxy> {
 		const h: needle.NeedleOptions = { headers: { "X-Phantombuster-Key-1": this.buster.apiKey } }
 		const resp = await needle("get", Toolkit.phantombusterServerUrl + "api/v1/agent" + this.buster.agentId, {}, h)
-		const p = resp.body.data.proxy as IProxyDTO
+		const p = resp.body.data ? resp.body.data.proxy as IProxyDTO : {} as IProxyDTO
 
-		if (p.proxy === "http") {
+		if (!isEmptyObject(p) && p.proxy === "http") {
 			return {
 				address: p.address,
 				username: p.username,
 				password: p.password,
 			}
-		} else if (p.proxy === "pool") {
+		} else if (!isEmptyObject(p) && p.proxy === "pool") {
 			const r = await needle("get", Toolkit.phantombusterServerUrl + Toolkit.phantombusterProxyPoolEndpoint, {}, h)
 			const pools = r.body.data as IProxyDTO[]
 			const p  = pools[Math.floor(Math.random() * pools.length)]

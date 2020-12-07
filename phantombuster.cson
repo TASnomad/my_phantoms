@@ -1,0 +1,13 @@
+[
+	name: 'martin.barreau'
+	apiKey: 'ENV:PERSONAL_API_KEY'
+	scripts:
+		# Libraries
+		# ---------
+		'lib-my-store.js': 'dist/libs/lib-my-store.js'
+		'lib-Toolkit.js': 'dist/libs/lib-Toolkit.js'
+		'lib-Phantom.js': 'dist/libs/lib-Phantom.js'
+		# Phantoms
+		# --------
+		'dummy_phantom.js': 'dist/src/dummy_phantom/dummy_phantom.js'
+]
