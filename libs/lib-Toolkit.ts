@@ -1,4 +1,6 @@
+import { createHash } from "crypto"
 import { URL } from "url"
+import { format } from "util"
 import needle from "needle"
 import Buster from "phantombuster"
 import validator from "is-my-json-valid"
@@ -164,6 +166,42 @@ export default class Toolkit {
 		if (Toolkit.verbose) {
 			console.log(`${Toolkit.logTypes[type]} ${fmt}`, ...args)
 		}
+	}
+
+	public static dedupeArray(arr: IObject[]): IObject[] {
+		const res: IObject[] = []
+		const o: { [key: string]: IObject } = {}
+		const len = arr.length
+
+		for (let i = 0; i < len; i++) {
+			const f = createHash("sha1").update(format("%o", arr[i])).digest("base64")
+			o[f] = arr[i] as IObject
+
+		}
+
+		const keys = Object.keys(o)
+		for (const k of keys) {
+			res.push(o[k] as IObject)
+		}
+		return res
+	}
+
+	public static dedupeArrayByFieldName(arr: IObject[], field: string): IObject[] {
+		const res: IObject[] = []
+		const o: { [key: string]: IObject } = {}
+		const len = arr.length
+
+		for (let i = 0; i < len; i++) {
+			const value = (arr[i] as IObject)[field] as string
+			o[value] = arr[i] as IObject
+
+		}
+
+		const keys = Object.keys(o)
+		for (const k of keys) {
+			res.push(o[k] as IObject)
+		}
+		return res
 	}
 
 	public validateArguments(): IObject {

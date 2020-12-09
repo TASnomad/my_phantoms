@@ -23,7 +23,8 @@
 
     "rootDirs": [
       "libs",
-      "src/dummy_phantom"
+      "src/dummy_phantom",
+      "src/PPX"
     ],
     "esModuleInterop": true,
 

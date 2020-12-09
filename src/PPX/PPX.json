@@ -1,0 +1,40 @@
+{
+	"slug": "payfit-payroll-extractor",
+	"description": "Extract any payroll in your Payfit account",
+	"defaultArgument": {},
+	"argumentForm": {
+		"enabled": true,
+		"alpaca": {
+			"options": {
+				"fields": {
+					"access": {
+						"label": "Payfit <b>'access'</b> cookie"
+					},
+					"accessToken": {
+						"label": "Payfit <b>'accessToken'</b> cookie"
+					},
+					"refreshToken": {
+						"label": "Payfit <b>'refreshToken'</b> cookie"
+					}
+				}
+			}
+		}
+	},
+	"argumentSchema": {
+		"type": "object",
+		"properties": {
+			"access": {
+				"type": "string",
+				"required": true
+			},
+			"accessToken": {
+				"type": "string",
+				"required": true
+			},
+			"refreshToken": {
+				"type": "string",
+				"required": true
+			}
+		}
+	}
+}

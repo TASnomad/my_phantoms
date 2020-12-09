@@ -1,6 +1,6 @@
 import Buster from "phantombuster"
 import puppeteer from "puppeteer"
-import { isEmptyObject } from "./lib-my-store"
+import { isEmptyObject, IObject } from "./lib-my-store"
 import Toolkit, { IProxy } from "./lib-Toolkit"
 
 interface IBrowserInitOptions {
@@ -17,6 +17,35 @@ interface IBrowserInitDTO {
 interface ISnapshotDTO {
 	html: string
 	image: string
+}
+
+export class PhantomStatefullness {
+	public static dedupeInput<T>(input: T[]): T[] {
+		return Array.from(new Set(input.filter(Boolean)))
+	}
+
+	public static getNextInput<T extends IObject>(rawInput: T[], input: T[], statefullnessKey: string, amount?: number): T[] {
+		const res: T[] = []
+
+		for (const q of input) {
+			let found = false
+			for (const d of rawInput) {
+				if (d && d[statefullnessKey] === q) {
+					found = true
+					break
+				}
+			}
+			if (!found) {
+				if (q) {
+					res.push(q)
+					if (typeof amount === "number" && res.length > amount) {
+						break
+					}
+				}
+			}
+		}
+		return res
+	}
 }
 
 export default class Phantom {

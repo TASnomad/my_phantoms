@@ -10,4 +10,5 @@
 		# Phantoms
 		# --------
 		'dummy_phantom.js': 'dist/src/dummy_phantom/dummy_phantom.js'
+		'Payfit Payroll Extractor.js': 'dist/src/PPX/PPX.js'
 ]
