@@ -362,6 +362,35 @@ export default class Toolkit {
 		return filename.replace(/[%#+-?\\,|]/g, "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 	}
 
+	public async getPhantomFile(filename: string): Promise<string> {
+		const f = Toolkit.getCleanedFilenameForS3(filename)
+		const endpoint = Toolkit.phantombusterServerUrl + "api/v1/agent" + this.buster.agentId
+		const resp = await needle("get", endpoint, {}, {
+			headers: {
+				"X-Phantombuster-Key-1": this.buster.agentId,
+			},
+		})
+
+		if (resp.body && resp.body.status === "success" && resp.body.data.awsFolder && resp.body.data.userAwsFolder) {
+			const opts: needle.NeedleOptions = {
+				decode_response: false,
+				parse_response: false,
+				headers: {
+					"Accept-Encoding": "gzip,deflate",
+					"Referer": "https://cache1.phantombooster.com"
+				}
+			}
+			const url = "https://cache1.phantombooster.com" + "/" + resp.body.data.userAwsFolder + "/" + resp.body.data.awsFolder + "/" + f
+			const r = await needle("get", url, opts)
+			if (r.statusCode && (r.statusCode >= 200 && r.statusCode < 300)) {
+				const tmp = r.body
+				return tmp ? tmp.toString() : ""
+			}
+			return ""
+		}
+		throw new Error("Can't load DB")
+	}
+
 	public saveCSV(csv: IObject[][], headers?: string[], name = "result"): Promise<string> {
 		const h = Array.isArray(headers) ? headers : Toolkit.getFieldsFromArray(csv)
 		return this.buster.saveText(Papa.unparse({ fields: h, data: csv }), Toolkit.getCleanedFilenameForS3(name) + ".csv")
