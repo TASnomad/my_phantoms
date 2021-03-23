@@ -152,6 +152,10 @@ export default class Toolkit {
 		return ""
 	}
 
+	public static async wait(milliseconds: number): Promise<void> {
+		return new Promise((resolve) => setTimeout(resolve, milliseconds))
+	}
+
 	public static toggleVerbose(): void {
 		Toolkit.verbose = !Toolkit.verbose
 	}
