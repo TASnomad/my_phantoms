@@ -93,6 +93,10 @@ export default class Phantom {
 		return res
 	}
 
+	public async saveFile(content: string, filename: string): Promise<string> {
+		return this.buster.saveText(content, filename)
+	}
+
 	public async waitForOneOfSelectors(page: puppeteer.Page, selectors: string[], options?: puppeteer.PageFnOptions): Promise<string> {
 		const handler = (sels: string[]) => {
 			for (const sel of sels) {
